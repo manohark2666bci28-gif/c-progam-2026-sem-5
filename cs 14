@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool isAnagram(char* s, char* t) {
+    int sLen = strlen(s);
+    int tLen = strlen(t);
+    
+    // Anagrams must be exactly the same length
+    if (sLen != tLen) {
+        return false;
+    }
+    
+    // Frequency array for all ASCII characters
+    int charCounts[256] = {0};
+    
+    // Count frequencies of characters in both strings simultaneously
+    for (int i = 0; i < sLen; i++) {
+        charCounts[(unsigned char)s[i]]++;
+        charCounts[(unsigned char)t[i]]--;
+    }
+    
+    // If it's a valid anagram, all positions in the array must be exactly 0
+    for (int i = 0; i < 256; i++) {
+        if (charCounts[i] != 0) {
+            return false;
+        }
+    }
+    
+    return true;
+}
