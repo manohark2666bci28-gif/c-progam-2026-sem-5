@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stdbool.h>
+
+char* minWindow(char* s, char* t) {
+    int sLen = strlen(s);
+    int tLen = strlen(t);
+    
+    // Return an empty string if target is larger or inputs are empty
+    if (sLen < tLen || sLen == 0 || tLen == 0) {
+        char* res = (char*)malloc(sizeof(char));
+        res[0] = '\0';
+        return res;
+    }
+    
+    // ASCII character frequency tracking arrays
+    int tCount[128] = {0};
+    int windowCount[128] = {0};
+    
+    // Populate required character counts from t
+    for (int i = 0; i < tLen; i++) {
+        tCount[(unsigned char)t[i]]++;
+    }
+    
+    // Count how many unique characters in t need to be fully matched
+    int requiredUnique = 0;
+    for (int i = 0; i < 128; i++) {
+        if (tCount[i] > 0) {
+            requiredUnique++;
+        }
+    }
+    
+    int left = 0, right = 0;
+    int formedUnique = 0; // Tracks unique characters matching criteria in window
+    
+    int minLen = INT_MAX;
+    int minLeft = 0;
+    
+    // Expand the window using the right pointer
+    while (right < sLen) {
+        char c = s[right];
+        windowCount[(unsigned char)c]++;
+        
+        // If a character frequency hits the exact match count, update formedUnique
+        if (tCount[(unsigned char)c] > 0 && windowCount[(unsigned char)c] == tCount[(unsigned char)c]) {
+            formedUnique++;
+        }
+        
+        // Contract the window from the left as long as all criteria are met
+        while (left <= right && formedUnique == requiredUnique) {
+            c = s[left];
+            
+            // Log global tracking properties if current window is smaller
+            if (right - left + 1 < minLen) {
+                minLen = right - left + 1;
+                minLeft = left;
+            }
+            
+            // Pop out left element and step window inwards
+            windowCount[(unsigned char)c]--;
+            if (tCount[(unsigned char)c] > 0 && windowCount[(unsigned char)c] < tCount[(unsigned char)c]) {
+                formedUnique--;
+            }
+            left++;
+        }
+        
+        right++;
+    }
+    
+    // Allocate memory for the final output string
+    if (minLen == INT_MAX) {
+        char* res = (char*)malloc(sizeof(char));
+        res[0] = '\0';
+        return res;
+    }
+    
+    char* resultStr = (char*)malloc((minLen + 1) * sizeof(char));
+    strncpy(resultStr, s + minLeft, minLen);
+    resultStr[minLen] = '\0'; // Append crucial null terminator
+    
+    return resultStr;
+}
