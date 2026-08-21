@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+// Structure to represent an entry in the hash table
+typedef struct {
+    int key;      // The number itself
+    int value;    // The index of the number in the original array
+    bool occupied;// Flag to check if this bucket is currently filled
+} HashEntry;
+
+int* twoSum(int* nums, int numsSize, int target, int* returnSize) {
+    // Allocate a hash table with a capacity twice the size of the array to reduce collisions
+    int capacity = numsSize * 2;
+    HashEntry* hashTable = (HashEntry*)calloc(capacity, sizeof(HashEntry));
+    
+    // Allocate memory for the two resulting indices
+    int* result = (int*)malloc(2 * sizeof(int));
+    *returnSize = 2;
+    
+    for (int i = 0; i < numsSize; i++) {
+        int complement = target - nums[i];
+        
+        // Lookup the complement in the hash table
+        // Use abs() because array elements can be negative numbers
+        int hash = abs(complement) % capacity;
+        while (hashTable[hash].occupied) {
+            if (hashTable[hash].key == complement) {
+                result[0] = hashTable[hash].value;
+                result[1] = i;
+                free(hashTable); // Free the hash table memory before returning
+                return result;
+            }
+            hash = (hash + 1) % capacity; // Linear probing
+        }
+        
+        // If complement not found, insert the current number into the hash table
+        hash = abs(nums[i]) % capacity;
+        while (hashTable[hash].occupied) {
+            hash = (hash + 1) % capacity;
+        }
+        hashTable[hash].key = nums[i];
+        hashTable[hash].value = i;
+        hashTable[hash].occupied = true;
+    }
+    
+    // In case no solution is found (guaranteed not to happen per problem constraints)
+    free(hashTable);
+    *returnSize = 0;
+    return NULL;
+}
