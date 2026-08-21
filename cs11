@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+// Helper function to calculate the sum of the squares of the digits of n
+int getNext(int n) {
+    int totalSum = 0;
+    while (n > 0) {
+        int d = n % 10;
+        totalSum += d * d;
+        n /= 10;
+    }
+    return totalSum;
+}
+
+bool isHappy(int n) {
+    int tortoise = n;
+    int hare = getNext(n);
+    
+    // Move tortoise at 1x speed and hare at 2x speed until they meet or hare hits 1
+    while (hare != 1 && tortoise != hare) {
+        tortoise = getNext(tortoise);
+        hare = getNext(getNext(hare));
+    }
+    
+    // If the hare reached 1, it's a happy number
+    return hare == 1;
+}
