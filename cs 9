@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+// Helper function to check if two words differ by exactly one letter
+bool isNeighbor(const char* word1, const char* word2, int wordLen) {
+    int diffCount = 0;
+    for (int i = 0; i < wordLen; i++) {
+        if (word1[i] != word2[i]) {
+            diffCount++;
+            if (diffCount > 1) return false;
+        }
+    }
+    return diffCount == 1;
+}
+
+int ladderLength(char* beginWord, char* endWord, char** wordList, int wordListSize) {
+    int wordLen = strlen(beginWord);
+    
+    // Check if endWord exists in the wordList
+    int endWordIdx = -1;
+    for (int i = 0; i < wordListSize; i++) {
+        if (strcmp(wordList[i], endWord) == 0) {
+            endWordIdx = i;
+            break;
+        }
+    }
+    if (endWordIdx == -1) return 0; // Target word not reachable
+    
+    // Arrays to track visited words (1-to-1 mapping with wordList indices)
+    bool visited[wordListSize];
+    for (int i = 0; i < wordListSize; i++) {
+        visited[i] = false;
+    }
+    
+    // BFS Queue structures
+    // queueWord stores pointers to strings; queueLevel stores sequence depth
+    char* queueWord[wordListSize + 1];
+    int queueLevel[wordListSize + 1];
+    int head = 0;
+    int tail = 0;
+    
+    // Initialize BFS with the beginWord
+    queueWord[tail] = beginWord;
+    queueLevel[tail] = 1;
+    tail++;
+    
+    while (head < tail) {
+        char* currentWord = queueWord[head];
+        int currentLevel = queueLevel[head];
+        head++;
+        
+        // If target is reached, return the total transformation steps
+        if (strcmp(currentWord, endWord) == 0) {
+            return currentLevel;
+        }
+        
+        // Find all unvisited neighbors in the dictionary
+        for (int i = 0; i < wordListSize; i++) {
+            if (!visited[i] && isNeighbor(currentWord, wordList[i], wordLen)) {
+                visited[i] = true; // Mark as visited immediately before push
+                queueWord[tail] = wordList[i];
+                queueLevel[tail] = currentLevel + 1;
+                tail++;
+            }
+        }
+    }
+    
+    return 0; // No valid transformation sequence found
+}
