@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool wordBreak(char* s, char** wordDict, int wordDictSize) {
+    int sLen = strlen(s);
+    
+    // dp[i] will be true if s[0...i-1] can be segmented into dictionary words
+    bool dp[sLen + 1];
+    memset(dp, false, sizeof(dp));
+    
+    // Base case: An empty string can always be segmented
+    dp[0] = true;
+    
+    // Check every prefix length from 1 to sLen
+    for (int i = 1; i <= sLen; i++) {
+        for (int j = 0; j < i; j++) {
+            // If the prefix s[0...j-1] is valid, check if the remaining substring s[j...i-1] is in wordDict
+            if (dp[j]) {
+                // Extract the substring s[j...i-1]
+                int subLen = i - j;
+                
+                // Compare this substring against all words in the dictionary
+                for (int k = 0; k < wordDictSize; k++) {
+                    if ((int)strlen(wordDict[k]) == subLen && strncmp(s + j, wordDict[k], subLen) == 0) {
+                        dp[i] = true;
+                        break; // Substring matched, move to the next prefix length 'i'
+                    }
+                }
+                
+                // If we found a valid match for dp[i], no need to check other partition indices 'j'
+                if (dp[i]) {
+                    break;
+                }
+            }
+        }
+    }
+    
+    return dp[sLen];
+}
