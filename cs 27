@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool isSubsequence(char* s, char* t) {
+    int p_s = 0; // Pointer for string s
+    int p_t = 0; // Pointer for string t
+    
+    // Scan both strings until the end of either is reached
+    while (s[p_s] != '\0' && t[p_t] != '\0') {
+        // If characters match, move the pointer for s
+        if (s[p_s] == t[p_t]) {
+            p_s++;
+        }
+        // Always move the pointer for t
+        p_t++;
+    }
+    
+    // If we successfully matched every character of s, p_s will reach the end
+    return s[p_s] == '\0';
+}
