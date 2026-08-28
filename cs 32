@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+
+int countBinarySubstrings(char* s) {
+    int total_substrings = 0;
+    int prev_group_len = 0;
+    int curr_group_len = 1; // Start counting the first character group
+    
+    // Start traversal from the second character
+    for (int i = 1; s[i] != '\0'; i++) {
+        if (s[i] == s[i - 1]) {
+            // Still in the same character group
+            curr_group_len++;
+        } else {
+            // Group has changed! 
+            // Add the valid substrings formed between the previous and current group
+            total_substrings += MIN(prev_group_len, curr_group_len);
+            
+            // Current group shifts to become the previous group
+            prev_group_len = curr_group_len;
+            
+            // Reset current group length for the new character
+            curr_group_len = 1;
+        }
+    }
+    
+    // Add the final remaining group pair match after the loop completes
+    total_substrings += MIN(prev_group_len, curr_group_len);
+    
+    return total_substrings;
+}
