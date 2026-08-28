@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+// Helper function to check if a specific segment of a string is a perfect palindrome
+bool isPalindromeRange(char* s, int left, int right) {
+    while (left < right) {
+        if (s[left] != s[right]) {
+            return false;
+        }
+        left++;
+        right--;
+    }
+    return true;
+}
+
+bool validPalindrome(char* s) {
+    int left = 0;
+    int right = strlen(s) - 1;
+    
+    while (left < right) {
+        // Mismatch found! We must attempt our single permitted character deletion.
+        if (s[left] != s[right]) {
+            // Case 1: Delete s[left] -> Check remaining substring from left + 1 to right
+            // Case 2: Delete s[right] -> Check remaining substring from left to right - 1
+            return isPalindromeRange(s, left + 1, right) || isPalindromeRange(s, left, right - 1);
+        }
+        left++;
+        right--;
+    }
+    
+    // It's already a perfect palindrome without deleting any character
+    return true;
+}
