@@ -1,0 +1,16 @@
+int removeElement(int* nums, int numsSize, int val) {
+    // 'write_index' tracks where the next valid element should go
+    int write_index = 0;
+    
+    // Scan through the entire array
+    for (int i = 0; i < numsSize; i++) {
+        // If the current element is not the target value, keep it
+        if (nums[i] != val) {
+            nums[write_index] = nums[i];
+            write_index++;
+        }
+    }
+    
+    // 'write_index' represents the count of elements not equal to 'val'
+    return write_index;
+}
