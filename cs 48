@@ -1,0 +1,27 @@
+int longestAlternatingSubarray(int* nums, int numsSize, int threshold) {
+    char flag = 0; // Tracks the required parity (0 for even, 1 for odd)
+    char cnt;      // Tracks current subarray length
+    char res = 0;  // Stores the maximum length found
+    
+    for(int i = 0; i < numsSize;){
+        // Check if the current element is a valid start: even and within threshold
+        if(((nums[i] & 1) == 0) && (nums[i] <= threshold)){
+            cnt = 0;
+            // Greedily extend the subarray while conditions are met
+            while((i < numsSize) && ((nums[i] & 1) == flag) && nums[i] <= threshold){
+                cnt++;
+                flag ^= 1; // Toggle parity flag: 0 -> 1 or 1 -> 0
+                i++;       // Move pointer forward
+            }
+            // Reset flag for the next potential starting point
+            flag = 0;
+            // Update the global maximum result
+            res = cnt > res ? cnt : res;
+        }
+        else {
+            // If not a valid start, move to the next index
+            i++;
+        }
+    }
+    return res;
+}
