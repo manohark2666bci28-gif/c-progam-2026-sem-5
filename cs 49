@@ -1,0 +1,35 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+typedef struct TreeNode TreeNode;
+void inorder(TreeNode* root, int* ans, int* returnSize) {
+    if (!root)
+        return;
+    inorder(root->left, ans, returnSize);
+    ans[(*returnSize)++] = root->val;
+    inorder(root->right, ans, returnSize);
+    return;
+}
+bool findTarget(TreeNode* root, int k) {
+    int* ans = (int*)calloc(sizeof(int), 10001);
+    int x = 0;
+    inorder(root, ans, &x);
+    //printf("%d", x);
+    int s = 0;
+    x--;
+    while (s < x) {
+        int sum = ans[s] + ans[x];
+        if (sum == k)
+            return true;
+        else if (sum > k)
+            x--;
+        else
+            s++;
+    }
+    return false;
+}
